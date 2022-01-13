@@ -19,29 +19,61 @@
         let ctx = canvas.getContext("2d");
         ctx.fillStyle = "black";
         ctx.strokeStyle = 'none'
+        ctx.lineWidth = 30;
+        ctx.lineJoin = "round"
 
-        let painting = false
+        let painting = false;
+        let lastX;
+        let lastY;
         let isTouchDevice = 'ontouchstart' in document.documentElement;
+        // if (isTouchDevice) {
+        //     canvas.onmousedown = (e) => {
+        //         lastX = e.touches[0].clientX;
+        //         lastY = e.touches[0].clientY;
+        //     }
+        //     canvas.ontouchmove = (e) => {
+        //         // ctx.arc(e.touches[0].clientX, e.touches[0].clientY, 10, 0, 2 * Math.PI);
+        //         ctx.beginPath();
+        //         ctx.moveTo(lastX, lastY);
+        //         ctx.lineTo(e.touches[0].clientX, e.touches[0].clientY);
+        //         ctx.closePath();
+        //         ctx.stroke();
+        //         lastX = e.touches[0].clientX;
+        //         lastY = e.touches[0].clientY;
+
+        //     }
         if (isTouchDevice) {
+            canvas.ontouchstart = (e) => {
+                x = e.touches[0].clientX;
+                y = e.touches[0].clientY;
+            };
+
             canvas.ontouchmove = (e) => {
                 ctx.beginPath();
-                ctx.arc(e.touches[0].clientX, e.touches[0].clientY, 10, 0, 2 * Math.PI);
+                ctx.moveTo(x, y);
+                ctx.lineTo(e.touches[0].clientX, e.touches[0].clientY);
+                ctx.closePath();
                 ctx.stroke();
-                ctx.fill();
-
-            }
-
+                x = e.touches[0].clientX;
+                y = e.touches[0].clientY;
+            };
         } else {
-            canvas.onmousedown = () => {
-                painting = true
+            canvas.onmousedown = (e) => {
+                painting = true;
+                lastX = e.clientX;
+                lastY = e.clientY;
             }
 
             canvas.onmousemove = (e) => {
                 if (painting === true) {
                     ctx.beginPath();
-                    ctx.arc(e.clientX, e.clientY, 10, 0, 2 * Math.PI);
+                    ctx.moveTo(lastX, lastY);
+                    ctx.lineTo(e.clientX, e.clientY);
+                    ctx.closePath();
                     ctx.stroke();
-                    ctx.fill();
+                    lastX = e.clientX;
+                    lastY = e.clientY;
+
                 } else {
                     console.log('什么都不做')
                 }
@@ -51,6 +83,7 @@
                 painting = false
             }
         }
+
 
     </script>
 
